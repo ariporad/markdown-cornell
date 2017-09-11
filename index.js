@@ -41,6 +41,11 @@ td > ul, td > ol {
 module.exports = function cornellNotes() {
 	return transformer;
 
+	function getDate() {
+		const now = new Date();
+		return `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+	}
+
 	function generateCornell(list) {
 		return list.children.map(listItem => {
 			let label =
@@ -58,11 +63,16 @@ module.exports = function cornellNotes() {
 	}
 
 	function transformer(tree, file) {
+		console.log(tree);
 		const nodes = tree.children;
 		const tableRows = [];
+		let heading = null;
 		let summary = null;
 		let title = null;
 		let cur = [];
+		if (nodes[0].type === 'heading' && nodes[0].depth === 4) {
+			heading = nodes.shift().children[0].value;
+		}
 		for (let i = 0; i < nodes.length; i++) {
 			const node = nodes[i];
 			if (node.type === 'list') {
@@ -92,8 +102,13 @@ module.exports = function cornellNotes() {
 				],
 			});
 		}
+		heading = heading ? `Ari Porad, ${heading}, ${getDate()}` : `Ari Porad, ${getDate()}`;
 		tree.children = [
 			{ type: 'html', value: `<style>${CSS}</style>` },
+			{
+				type: 'html',
+				value: `<div style="float: right;">${heading}</div>`,
+			},
 			title,
 			{ type: 'blockquote', children: [summary] },
 			{ type: 'table', align: [null, null], children: tableRows },
