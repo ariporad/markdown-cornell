@@ -63,7 +63,6 @@ module.exports = function cornellNotes() {
 	}
 
 	function transformer(tree, file) {
-		console.log(tree);
 		const nodes = tree.children;
 		const tableRows = [];
 		let heading = null;
@@ -109,8 +108,8 @@ module.exports = function cornellNotes() {
 				type: 'html',
 				value: `<div style="float: right;">${heading}</div>`,
 			},
-			title,
-			{ type: 'blockquote', children: [summary] },
+			title ? title : { type: 'heading', value: 'Cornell Notes' },
+			{ type: 'blockquote', children: summary ? [summary] : [] },
 			{ type: 'table', align: [null, null], children: tableRows },
 		];
 	}
